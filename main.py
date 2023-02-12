@@ -26,10 +26,17 @@ class TheBottingCompany:
             "temperature": 1.0,
         }
 
-        time.sleep(2)
-        response = requests.post("https://api.openai.com/v1/completions", headers=headers, json=data)
-        output = response.json()
-            
+        failed = 0
+        while True:
+            time.sleep(2)
+            response = requests.post("https://api.openai.com/v1/completions", headers=headers, json=data)
+            output = response.json()
+            if output["choices"][0]["text"] != "":
+                break
+            else:
+                failed += 1
+                if failed > 3:
+                    return "Can you say it again please?"
         
         return output["choices"][0]["text"]
 
