@@ -31,27 +31,24 @@ class TheBottingCompany:
             time.sleep(2)
             response = requests.post("https://api.openai.com/v1/completions", headers=headers, json=data)
             output = response.json()
-            if output["choices"][0]["text"] != "":
-                break
-            else:
-                failed += 1
-                if failed > 3:
-                    return "Can you say it again please?"
+            try:
+                if output["choices"][0]["text"] != "":
+                    break
+                else:
+                    failed += 1
+                    if failed > 3:
+                        return "Can you say it again please?"
+            except KeyError: time.sleep(2)
         
         return output["choices"][0]["text"]
 
-
-    
     def loop(self):
-        userb = "Hello"
-        usera = "Non assigned."
+        base = "Hello"
         while True:
-            print("User A: " + usera)
-            usera = self.ask(userb)
-            
-            print("User B: " + userb)
-            userb = self.ask(usera)
-    
+            for webhook in self.webhooks:
+                base = self.ask(base)
+                self.postWebhook(webhook, base)
+
     def postWebhook(self, webhook, message):
         req = requests.post(webhook, json={"content": message})
 
