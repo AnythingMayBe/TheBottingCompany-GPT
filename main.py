@@ -51,6 +51,10 @@ class TheBottingCompany:
             
             print("User B: " + userb)
             userb = self.ask(usera)
+    
+    def postWebhook(self, webhook, message):
+        req = requests.post(webhook, json={"content": message})
+
 
 
 
